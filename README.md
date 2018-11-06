@@ -1,6 +1,6 @@
-Prometheusbeat example manifests. 
+Prometheusbeat example manifests.
 
-Example configuration for prometheus-operator
+Example configuration for prometheus-operator:
 
 ```
   remoteWrite:
@@ -11,3 +11,5 @@ Example configuration for prometheus-operator
       regex:         lts.+
       action:        keep
 ```
+
+The configuration above forwards metrics for recording rules which start with `lts`.
