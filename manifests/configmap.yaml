@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheusbeat-config
+  namespace: monitoring
+  labels:
+    app: prometheusbeat
+data:
+  elasticsearch_host: |-
+    tbd
+  elasticsearch_port: |-
+    9200
+  elasticsearch_username: |-
+    elastic
+  elasticsearch_index_pattern: |-
+    prometheusbeat-%{+yyyy.MM.dd}
+  prometheusbeat.yml: |-
+    prometheusbeat:
+      listen: ":8080"
+      context: "/prometheus"
+      name_under_root: true
+
+    output.console:
+      pretty: true

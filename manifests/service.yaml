@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheusbeat
+  namespace: monitoring
+  labels:
+    app: prometheusbeat
+spec:
+  selector:
+    app: prometheusbeat
+  ports:
+  - protocol: TCP
+    port: 8080

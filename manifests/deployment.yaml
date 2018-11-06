@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheusbeat
+  namespace: monitoring
+  labels:
+    app: prometheusbeat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheusbeat
+  template:
+    metadata:
+      labels:
+        app: prometheusbeat
+    spec:
+      containers:
+      - name: prometheusbeat
+        image: infonova/prometheusbeat:6.4.1
+        args: [
+          "-c", "/etc/prometheusbeat.yml",
+          "-e",
+        ]
+        env:
+        - name: ELASTICSEARCH_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: prometheusbeat-config
+              key: elasticsearch_host
+        - name: ELASTICSEARCH_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: prometheusbeat-config
+              key: elasticsearch_port
+        - name: ELASTICSEARCH_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: prometheusbeat-config
+              key: elasticsearch_username
+        - name: ELASTICSEARCH_INDEX_PATTERN
+          valueFrom:
+            configMapKeyRef:
+              name: prometheusbeat-config
+              key: elasticsearch_index_pattern
+        securityContext:
+          runAsUser: 0
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 500m
+            memory: 100Mi
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        volumeMounts:
+        - name: prometheusbeat-config
+          mountPath: /etc/prometheusbeat.yml
+          readOnly: true
+          subPath: prometheusbeat.yml
+      volumes:
+      - name: prometheusbeat-config
+        configMap:
+          name: prometheusbeat-config
+          items:
+          - key: prometheusbeat.yml
+            path: prometheusbeat.yml
